@@ -40,4 +40,36 @@ void Image::Export(const char* path) const {
         std::cout << "File could not be opened\n";
         return;
     }
+
+    /**
+     * Three parts (required):
+     * 1) File Header - General information.
+     * 2) Information header (DIB header) - Detailed information.
+     * 3) Pixel array - Color data for each pixel.
+     * 
+     * Image (width = 3, height = 4);
+     * 
+     *          9 bytes
+     *  _______________________
+     * |                       |
+     *  ____________________________
+     * |3 bytes |         |         |
+     * |--------|---------|---------|
+     * |3 bytes | 3 bytes | 3 bytes |
+     * |--------|---------|---------|
+     * |3 bytes | 3 bytes | 3 bytes |
+     * |--------|---------|---------|
+     * |3 bytes | 3 bytes | 3 bytes |
+     * |--------|---------|---------|
+     * (0, 0)
+     * 9 % 4 = 1
+     * 4 - 1 = 3 bytes of padding
+    */
+
+    unsigned char bmpPad[3] = { 0, 0, 0 };
+    const int paddingAmount = ((4 - (m_width * 3) % 4) % 4);
+
+    const int fileHeaderSize        = 14;
+    const int informationHeaderSize = 40;
+    const int fileSize              = fileHeaderSize + informationHeaderSize * m_width * m_height * 3 + paddingAmount * m_height;
 }
